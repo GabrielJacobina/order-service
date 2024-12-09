@@ -3,12 +3,15 @@ package com.order.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.order.requests.OrderRequest;
 import com.order.requests.OrderResponse;
+import com.order.requests.PaymentResponse;
 
 import java.util.List;
 
 public interface OrderService {
 
-    void save(OrderRequest order) throws JsonProcessingException;
+    void receiveOrder(OrderRequest order) throws JsonProcessingException;
 
     List<OrderResponse> listOrder();
+
+    void receivePayment(PaymentResponse payment) throws JsonProcessingException;
 }

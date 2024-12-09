@@ -7,13 +7,20 @@ import com.order.exception.CustomException;
 import com.order.repository.OrderRepository;
 import com.order.requests.OrderRequest;
 import com.order.requests.OrderResponse;
+import com.order.requests.PaymentRequest;
+import com.order.requests.PaymentResponse;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class OrderServiceImpl implements OrderService {
 
@@ -23,15 +30,21 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
 
-    public OrderServiceImpl(ObjectMapper objectMapper, OrderRepository orderRepository) {
-        this.objectMapper = objectMapper;
-        this.orderRepository = orderRepository;
+    private final RabbitTemplate rabbitTemplate;
+
+    @Value("${exchange.order_payment.name}")
+    private String exchangeOrderPaymentName;
+
+    private Order save(Order order) throws JsonProcessingException {
+        Order orderSaved = orderRepository.save(order);
+        logger.info("Order saved successfully {}", objectMapper.writerWithView(Order.class).writeValueAsString(orderSaved));
+        return orderSaved;
     }
 
     @Override
-    public void save(OrderRequest order) throws JsonProcessingException {
-        Order orderSaved = orderRepository.save(new Order(order));
-        logger.info("Order saved successfully {}", objectMapper.writerWithView(Order.class).writeValueAsString(orderSaved));
+    public void receiveOrder(OrderRequest order) throws JsonProcessingException {
+        Order orderSaved = save(new Order(order));
+        processPayment(new PaymentRequest(orderSaved.getId(), orderSaved.getIdUser(), orderSaved.getStatus()));
     }
 
     @Override
@@ -43,7 +56,21 @@ public class OrderServiceImpl implements OrderService {
         return orders.stream().map(this::toOrderDTO).toList();
     }
 
-    public OrderResponse toOrderDTO(Order order) {
+    @Override
+    public void receivePayment(PaymentResponse payment) throws JsonProcessingException {
+        Optional<Order> orderOptional = orderRepository.findById(payment.idOrder());
+        if (orderOptional.isPresent()) {
+            orderOptional.get().setStatus(payment.status());
+            save(orderOptional.get());
+        }
+    }
+
+    private OrderResponse toOrderDTO(Order order) {
         return new OrderResponse(order.getId(), order.getProducts(), order.getTotalPrice(), order.getIdUser(), order.getTime().toString());
+    }
+
+    private void processPayment(PaymentRequest payment) {
+        rabbitTemplate.convertAndSend(exchangeOrderPaymentName, payment);
+        logger.info("send message to payment {}", payment);
     }
 }
