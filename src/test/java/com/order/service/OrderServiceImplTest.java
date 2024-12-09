@@ -24,6 +24,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -116,5 +117,30 @@ class OrderServiceImplTest {
         verify(orderRepository, never()).save(any(Order.class));
     }
 
+    @Test
+    void getOrderById_WhenOrderExists_ShouldReturnOrderResponse() {
+        UUID orderId = UUID.randomUUID();
+        Order orderMock = OrderCreator.createPaidOrder();
+        BDDMockito.given(orderRepository.findById(orderId)).willReturn(Optional.of(orderMock));
+
+        OrderResponse orderResponse = orderService.gerOrderById(orderId);
+
+        assertNotNull(orderResponse);
+        assertEquals(orderMock.getId(), orderResponse.id());
+        assertEquals(orderMock.getIdUser(), orderResponse.idUser());
+        verify(orderRepository, times(1)).findById(orderId);
+    }
+
+    @Test
+    void getOrderById_WhenOrderDoesNotExist_ShouldThrowCustomException() {
+        UUID orderId = UUID.randomUUID();
+        BDDMockito.given(orderRepository.findById(orderId)).willReturn(Optional.empty());
+
+        CustomException exception = assertThrows(CustomException.class, () -> orderService.gerOrderById(orderId));
+
+        assertEquals("Order not found", exception.getMessage());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        verify(orderRepository, times(1)).findById(orderId);
+    }
 
 }

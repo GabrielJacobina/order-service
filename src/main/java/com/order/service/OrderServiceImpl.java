@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -63,6 +64,12 @@ public class OrderServiceImpl implements OrderService {
             orderOptional.get().setStatus(payment.status());
             save(orderOptional.get());
         }
+    }
+
+    @Override
+    public OrderResponse gerOrderById(UUID id) {
+        Optional<Order> orderOptional = orderRepository.findById(id);
+        return orderOptional.map(this::toOrderDTO).orElseThrow(() -> new CustomException("Order not found", HttpStatus.NOT_FOUND));
     }
 
     private OrderResponse toOrderDTO(Order order) {

@@ -6,6 +6,7 @@ import com.order.requests.OrderResponse;
 import com.order.requests.PaymentResponse;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface OrderService {
 
@@ -14,4 +15,6 @@ public interface OrderService {
     List<OrderResponse> listOrder();
 
     void receivePayment(PaymentResponse payment) throws JsonProcessingException;
+
+    OrderResponse gerOrderById(UUID id);
 }

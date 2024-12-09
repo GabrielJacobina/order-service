@@ -2,6 +2,7 @@ package com.order.util;
 
 import com.order.entity.Order;
 import com.order.requests.OrderRequest;
+import com.order.requests.OrderResponse;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -33,5 +34,9 @@ public class OrderCreator {
 
     public static OrderRequest createOrderRequest() {
         return new OrderRequest(List.of(ProductDTOCreator.createProductDTO()), 4L);
+    }
+
+    public static OrderResponse createOrderResponse() {
+        return new OrderResponse(UUID.randomUUID(), List.of(ProductDTOCreator.createProductDTO()),new BigDecimal(9), 4L, LocalDateTime.now().toString());
     }
 }
