@@ -2,10 +2,7 @@ package com.order.entity;
 
 import com.order.dto.ProductDTO;
 import com.order.requests.OrderRequest;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -18,6 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Getter
 @Setter
 @Document
@@ -38,7 +36,7 @@ public class Order {
         calculateTotalPrice(dto.products());
         this.time = LocalDateTime.now();
         this.idUser = dto.idUser();
-        this.status = "pendente";
+        this.status = "pending";
     }
 
     private void calculateTotalPrice(List<ProductDTO> products) {

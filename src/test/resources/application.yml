@@ -1,0 +1,11 @@
+queue:
+  order:
+    name: order_queue
+  order_payment:
+    name: order_payment_queue
+  payment:
+    name: payment_queue
+
+exchange:
+  order_payment:
+    name: order_payment_ex
