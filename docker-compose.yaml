@@ -10,18 +10,16 @@ services:
       - "15672:15672"
       - "5672:5672"
 
-  postgres:
-    image: postgres:latest
-    container_name: postgres_order
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: order_db
+  mongo:
+    image: mongo:latest
     ports:
-      - "5432:5432"
+      - "27017:27017"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mongo-data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
 
 volumes:
-  postgres_data:
+  mongo-data:
     driver: local
