@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:latest  # Imagem do PostgreSQL
+    container_name: postgres_order
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: order_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+    driver: local
