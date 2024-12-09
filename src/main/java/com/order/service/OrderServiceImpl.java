@@ -2,17 +2,17 @@ package com.order.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.order.dto.OrderDTO;
 import com.order.entity.Order;
 import com.order.exception.CustomException;
 import com.order.repository.OrderRepository;
+import com.order.requests.OrderRequest;
+import com.order.requests.OrderResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -29,13 +29,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void save(OrderDTO order) throws JsonProcessingException {
+    public void save(OrderRequest order) throws JsonProcessingException {
         Order orderSaved = orderRepository.save(new Order(order));
-        logger.info("Order saved successfully", objectMapper.writerWithView(Order.class).writeValueAsString(orderSaved));
+        logger.info("Order saved successfully {}", objectMapper.writerWithView(Order.class).writeValueAsString(orderSaved));
     }
 
     @Override
-    public List<OrderDTO> listOrder() {
+    public List<OrderResponse> listOrder() {
         List<Order> orders = orderRepository.findAll();
         if (orders.isEmpty()) {
             throw new CustomException("No orders found", HttpStatus.NOT_FOUND);
@@ -43,7 +43,7 @@ public class OrderServiceImpl implements OrderService {
         return orders.stream().map(this::toOrderDTO).toList();
     }
 
-    public OrderDTO toOrderDTO(Order order) {
-        return new OrderDTO(order.getProducts(), order.getTotalPrice(), order.getTime());
+    public OrderResponse toOrderDTO(Order order) {
+        return new OrderResponse(order.getId(), order.getProducts(), order.getTotalPrice(), order.getTime().toString());
     }
 }

@@ -1,6 +1,6 @@
 package com.order;
 
-import com.order.dto.OrderDTO;
+import com.order.requests.OrderRequest;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +21,7 @@ public class TesteRabbitMQ {
     private String queueName;
 
     @PostMapping
-    ResponseEntity sendMessage(@RequestBody OrderDTO orderDTO) {
+    ResponseEntity sendMessage(@RequestBody OrderRequest orderDTO) {
         rabbitTemplate.convertAndSend(queueName, orderDTO);
         return ResponseEntity.ok().body(orderDTO);
     }

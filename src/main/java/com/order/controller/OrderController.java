@@ -1,6 +1,6 @@
 package com.order.controller;
 
-import com.order.dto.OrderDTO;
+import com.order.requests.OrderResponse;
 import com.order.service.OrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,8 +18,7 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderDTO>> listOrder() {
-        List<OrderDTO> orders = service.listOrder();
-        return ResponseEntity.ok(orders);
+    public ResponseEntity<List<OrderResponse>> listOrder() {
+        return ResponseEntity.ok(service.listOrder());
     }
 }
