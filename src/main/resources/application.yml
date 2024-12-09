@@ -18,6 +18,10 @@ spring:
     password: ${RABBITMQ_DEFAULT_PASS}
     virtual-host: ${RABBITMQ_DEFAULT_VHOST}
 
+queue:
+  order:
+    name: order_queue
+
 server:
   servlet:
     context-path: /order
