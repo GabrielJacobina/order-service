@@ -3,6 +3,7 @@ package com.order.listener;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.order.dto.OrderDTO;
+import com.order.service.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -15,12 +16,16 @@ public class MessageListener {
 
     private final ObjectMapper objectMapper;
 
-    public MessageListener(ObjectMapper objectMapper) {
+    private final OrderService orderService;
+
+    public MessageListener(ObjectMapper objectMapper, OrderService orderService) {
         this.objectMapper = objectMapper;
+        this.orderService = orderService;
     }
 
     @RabbitListener(queues = "${queue.order.name}")
     public void receiveMessageCheckout(OrderDTO order) throws JsonProcessingException {
-        logger.info("Received order of checkout: {}", objectMapper.writerWithView(OrderDTO.class).writeValueAsString(order));
+        logger.info("Received order of product A: {}", objectMapper.writerWithView(OrderDTO.class).writeValueAsString(order));
+        orderService.save(order);
     }
 }
