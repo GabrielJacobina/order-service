@@ -44,6 +44,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public OrderResponse toOrderDTO(Order order) {
-        return new OrderResponse(order.getId(), order.getProducts(), order.getTotalPrice(), order.getTime().toString());
+        return new OrderResponse(order.getId(), order.getProducts(), order.getTotalPrice(), order.getIdUser(), order.getTime().toString());
     }
 }

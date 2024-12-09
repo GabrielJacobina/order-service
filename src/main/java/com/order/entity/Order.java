@@ -3,6 +3,7 @@ package com.order.entity;
 import com.order.dto.ProductDTO;
 import com.order.requests.OrderRequest;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
@@ -12,6 +13,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Document
+@CompoundIndex(name = "user_time_unique_idx", def = "{'idUser': 1, 'time': 1}", unique = true)
 public class Order {
 
     @Id
@@ -19,6 +21,7 @@ public class Order {
     private List<ProductDTO> products;
     private BigDecimal totalPrice;
     private LocalDateTime time;
+    private Long idUser;
 
     public Order() {
     }
@@ -35,6 +38,7 @@ public class Order {
         this.products = dto.products();
         calculateTotalPrice(dto.products());
         this.time = LocalDateTime.now();
+        this.idUser = dto.idUser();
     }
 
     private void calculateTotalPrice(List<ProductDTO> products) {
@@ -73,5 +77,13 @@ public class Order {
 
     public void setTime(LocalDateTime time) {
         this.time = time;
+    }
+
+    public Long getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(Long idUser) {
+        this.idUser = idUser;
     }
 }

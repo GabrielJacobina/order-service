@@ -6,5 +6,5 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
-public record OrderResponse(UUID id, List<ProductDTO> products, BigDecimal totalPrice, String time) {
+public record OrderResponse(UUID id, List<ProductDTO> products, BigDecimal totalPrice, Long idUser, String time) {
 }
